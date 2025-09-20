@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "NewsOwl ",
+  "version": "1.0.0",
+  "description": "A friendly Chrome extension that provides instant fact-checking and bias detection when you highlight text.",
+  "permissions": ["activeTab", "storage","contextMenus", "sidePanel"],
+  "content_scripts": [
+    {
+      "matches": ["*://*.reddit.com/*"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "NewsOwl"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/Untitled_design_2.png",
+    "48": "icons/Untitled_design_2.png",
+    "128": "icons/Untitled_design_2.png"
+  }
+}

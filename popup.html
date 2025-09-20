@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 300px;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .logo {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+    
+    h1 {
+      font-size: 18px;
+      margin: 0;
+      color: #374151;
+    }
+    
+    .subtitle {
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+    
+    .stats {
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    .stat-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    .settings {
+      border-top: 1px solid #e5e7eb;
+      padding-top: 16px;
+      margin-top: 16px;
+    }
+    
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+    
+    .toggle {
+      width: 40px;
+      height: 20px;
+      background: #d1d5db;
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .toggle.active {
+      background: #3b82f6;
+    }
+    
+    .toggle::after {
+      content: '';
+      width: 16px;
+      height: 16px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.2s;
+    }
+    
+    .toggle.active::after {
+      transform: translateX(20px);
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="bg-sky-950">
+      <ul>
+        <li>History</li>
+        <li>Account</li>
+      </ul>
+    </div>
+    <div class="header">
+      <div class="logo">🔍</div>    
+      <h1>Fact Check Companion</h1>
+      <div class="subtitle">Instant fact-checking & bias detection</div>
+    </div>
+  </div>
+  
+  <div class="stats">
+    <div class="stat-item">
+      <span>Facts checked today:</span>
+      <strong id="facts-checked">0</strong>
+    </div>
+    <div class="stat-item">
+      <span>Bias alerts:</span>
+      <strong id="bias-alerts">0</strong>
+    </div>
+    <div class="stat-item">
+      <span>Sources verified:</span>
+      <strong id="sources-verified">0</strong>
+    </div>
+  </div>
+  
+  <div class="settings">
+    <div class="setting-item">
+      <span>Enable fact-checking</span>
+      <div class="toggle active" id="fact-check-toggle"></div>
+    </div>
+    <div class="setting-item">
+      <span>Show bias indicators</span>
+      <div class="toggle active" id="bias-toggle"></div>
+    </div>
+    <div class="setting-item">
+      <span>Auto-expand details</span>
+      <div class="toggle" id="auto-expand-toggle"></div>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

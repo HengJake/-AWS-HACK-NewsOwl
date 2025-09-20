@@ -1,0 +1,13 @@
+{
+  "name": "fact-check-companion",
+  "version": "1.0.0",
+  "description": "A Chrome extension that provides instant fact-checking and bias detection when you highlight text.",
+  "main": "background.js",
+  "scripts": {
+    "build": "echo 'Chrome extension - no build step required'"
+  },
+  "keywords": ["chrome-extension", "fact-check", "bias-detection", "reddit"],
+  "author": "",
+  "license": "ISC",
+  "private": true
+}
