@@ -93,12 +93,23 @@
     .toggle.active::after {
       transform: translateX(20px);
     }
+
+    .top-nav {
+      display:flex;
+      flex-direction: row;
+      gap: 1rem;
+    }
+
+    .top-nav li {
+      text-decoration: none;
+    }
+
   </style>
 </head>
 <body>
   <div>
-    <div class="bg-sky-950">
-      <ul>
+    <div>
+      <ul class="top-nav">
         <li>History</li>
         <li>Account</li>
       </ul>

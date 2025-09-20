@@ -14,10 +14,21 @@ class FactCheckCompanion {
     const selection = window.getSelection()
     const selectedText = selection.toString().trim()
 
+    console.log(selectedText)
+
     if (selectedText.length > 10) {
       const range = selection.getRangeAt(0)
       const rect = range.getBoundingClientRect()
-      
+
+      // Send selected text to sidepanel
+      if (chrome.runtime?.id) {
+        chrome.runtime.sendMessage({
+          action: "updateSidePanel",
+          selectedText: selectedText,
+          url: window.location.href
+        })
+      }
+
       // Show the choice popup card first
       this.showChoiceCard(selectedText, rect)
     }
@@ -143,7 +154,7 @@ class FactCheckCompanion {
     // Update the card content to show analysis
     const card = this.currentCard
     card.className = "fact-check-card analysis-card"
-    
+
     card.innerHTML = `
       <div class="fact-check-card-header">
         <div class="fact-check-type" id="fact-type">
@@ -306,18 +317,43 @@ class FactCheckCompanion {
       ? "Show less"
       : "Show more details"
   }
+        </div>
+      `
+    }
+
+    // Add sources
+    sourcesElement.innerHTML = analysis.sources
+      .map((source) => `<a href="${source.url}" class="source-item" target="_blank">${source.title}</a>`)
+      .join("")
+
+    // Show expand toggle
+    expandToggle.style.display = "flex"
+  }
+
+  togglePin(pinBtn) {
+    this.isPinned = !this.isPinned
+    pinBtn.classList.toggle("pinned")
+    pinBtn.title = this.isPinned ? "Unpin card" : "Pin card"
+  }
+
+  toggleExpand(card) {
+    const expandContent = card.querySelector("#expand-content")
+    const expandToggle = card.querySelector("#expand-toggle")
+    const arrow = expandToggle.querySelector("span:last-child")
+
+    expandContent.classList.toggle("open")
+    arrow.textContent = expandContent.classList.contains("open") ? "▲" : "▼"
+    expandToggle.querySelector("span:first-child").textContent = expandContent.classList.contains("open")
+      ? "Show less"
+      : "Show more details"
+  }
 
   hideFactCheckCard() {
     if (this.currentCard && !this.isPinned) {
-      this.currentCard.style.opacity = "0"
-      this.currentCard.style.transform = "translateY(10px)"
-
-      setTimeout(() => {
-        if (this.currentCard && this.currentCard.parentNode) {
-          this.currentCard.parentNode.removeChild(this.currentCard)
-        }
-        this.currentCard = null
-      }, 200)
+      if (this.currentCard.parentNode) {
+        this.currentCard.parentNode.removeChild(this.currentCard)
+      }
+      this.currentCard = null
     }
   }
 }
@@ -325,8 +361,10 @@ class FactCheckCompanion {
 // Initialize the extension
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
+    console.log("Content Loaded")
     new FactCheckCompanion()
   })
 } else {
+  console.log("Content Loaded")
   new FactCheckCompanion()
 }

@@ -30,12 +30,20 @@
   justify-content: space-between;
 }
 
+.fact-check-card-header {
+  user-select: none;
+}
+
 .fact-check-type {
   display: flex;
   align-items: center;
   gap: 8px;
   font-weight: 600;
-  color: #374151;
+  color: #ffffff;
+}
+
+.fact-check-type span:last-child {
+  color: white;
 }
 
 .fact-check-type.opinion {
@@ -205,6 +213,84 @@
   border-color: #3b82f6;
 }
 
+/* Choice Card Styles */
+.choice-card .fact-check-type {
+  color: #374151;
+}
+
+.choice-card .fact-check-type span {
+  color: #374151;
+}
+
+.selected-text-preview {
+  background-color: #f8fafc;
+  padding: 12px;
+  border-radius: 8px;
+  font-style: italic;
+  color: #6b7280;
+  margin-bottom: 16px;
+  border-left: 3px solid #3b82f6;
+}
+
+.choice-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.choice-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.yes-btn {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.yes-btn:hover {
+  background-color: #2563eb;
+}
+
+.no-btn {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.no-btn:hover {
+  background-color: #e5e7eb;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.card-action-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.card-action-btn:hover {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
   .fact-check-card {
@@ -231,5 +317,28 @@
 
   .source-item {
     border-bottom-color: #374151;
+  }
+
+  .choice-card .fact-check-type,
+  .choice-card .fact-check-type span {
+    color: #f9fafb;
+  }
+
+  .selected-text-preview {
+    background-color: #374151;
+    color: #d1d5db;
+  }
+
+  .no-btn {
+    background-color: #374151;
+    color: #d1d5db;
+  }
+
+  .no-btn:hover {
+    background-color: #4b5563;
+  }
+
+  .card-action-btn:hover {
+    background-color: #374151;
   }
 }
