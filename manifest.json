@@ -3,10 +3,49 @@
   "name": "NewsOwl ",
   "version": "1.0.0",
   "description": "A friendly Chrome extension that provides instant fact-checking and bias detection when you highlight text.",
-  "permissions": ["activeTab", "storage","contextMenus", "sidePanel"],
+  "permissions": [
+    "activeTab",
+    "storage",
+    "contextMenus",
+    "sidePanel",
+    "identity"
+  ],
+  "host_permissions": [
+    "https://majb2cj4m6.execute-api.ap-southeast-1.amazonaws.com/*"
+  ],
   "content_scripts": [
     {
-      "matches": ["*://*.reddit.com/*"],
+      "matches": [
+        "*://*.channelnewsasia.com/*",
+        "*://*.malaysiakini.com/*",
+        "*://*.thestar.com.my/*",
+        "*://*.freemalaysiatoday.com/*",
+        "*://*.malaymail.com/*",
+        "*://*.nst.com.my/*",
+        "*://*.theedgemarkets.com/*",
+        "*://*.thesundaily.my/*",
+        "*://*.thevibes.com/*",
+        "*://*.malaysianow.com/*",
+        "*://*.theborneopost.com/*",
+
+        "*://*.nytimes.com/*",
+        "*://*.cnn.com/*",
+        "*://*.reuters.com/*",
+        "*://*.wsj.com/*",
+        "*://*.bbc.com/*",
+        "*://*.npr.org/*",
+        "*://news.google.com/*",
+        "*://*.foxnews.com/*",
+        "*://*.nbcnews.com/*",
+        "*://*.washingtonpost.com/*",
+
+        "*://*.facebook.com/*",
+        "*://*.twitter.com/*",
+        "*://*.x.com/*",
+        "*://*.instagram.com/*",
+        "*://*.youtube.com/*",
+        "*://*.reddit.com/*"
+      ],
       "js": ["content.js"],
       "css": ["content.css"],
       "run_at": "document_end"

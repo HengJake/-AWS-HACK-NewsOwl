@@ -53,6 +53,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     })
     sendResponse({ success: true })
   } else if (request.action === "openSidePanel") {
+    console.log('Background: Opening sidepanel for text:', request.selectedText.substring(0, 50) + '...')
     // Store the selected text and context for the side panel
     chrome.storage.local.set({
       selectedText: request.selectedText,
@@ -65,13 +66,31 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     chrome.sidePanel.open({
       windowId: sender.tab.windowId
     }).then(() => {
+      console.log('Background: Sidepanel opened successfully')
       sendResponse({ success: true, message: "Side panel opened successfully" })
     }).catch((error) => {
       console.error("Error opening side panel:", error)
       sendResponse({ success: false, error: error.message })
     })
-    
+
     // Return true to indicate we'll send a response asynchronously
     return true
+  } else if (request.action === "updateSidePanelWithAnalysis") {
+    console.log('Background: Storing analysis results for sidepanel')
+    // Store analysis results for sidepanel
+    chrome.storage.local.set({
+      latestAnalysis: request.analysis
+    })
+
+    // Send message to sidepanel if it's open
+    chrome.runtime.sendMessage({
+      action: "analysisComplete",
+      analysis: request.analysis
+    }).catch(() => {
+      // Sidepanel might not be open, that's okay
+      console.log('Sidepanel not available to receive analysis')
+    })
+
+    sendResponse({ success: true })
   }
 })

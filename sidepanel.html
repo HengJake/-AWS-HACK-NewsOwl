@@ -163,7 +163,6 @@
         color: var(--fg-secondary);
         font-size: var(--font-size-sm);
         line-height: var(--line-height-normal);
-        margin-bottom: var(--space-3);
       }
 
       .selection-content.collapsed {
@@ -226,6 +225,7 @@
         display: flex;
         flex-wrap: wrap;
         gap: var(--space-2);
+        margin-bottom: var(--space-4);
       }
 
       .chip {
@@ -559,13 +559,21 @@
     </style>
   </head>
   <body>
-    <div id="sp-root" data-state="ready" data-classification="statement">
+    <div id="sp-root" data-state="empty" data-classification="statement">
       <!-- Header -->
       <header id="sp-header">
         <div class="header-left">
-          <h1 class="app-title">FactCheck</h1>
+          <h1 class="app-title">NewsOwl</h1>
           <div class="status-dot" title="Connected"></div>
         </div>
+
+        <!-- Classification -->
+        <section id="sp-classification">
+          <div class="classification-badge" data-type="statement">
+            Statement
+          </div>
+          <!-- For Opinion: <div class="classification-badge" data-type="opinion">Opinion</div> -->
+        </section>
       </header>
 
       <!-- Main Content -->
@@ -573,11 +581,7 @@
         <!-- Selection Preview -->
         <section id="sp-selection">
           <div class="selection-content collapsed" id="selection-text">
-            Climate change is a hoax perpetrated by scientists to get more
-            funding for their research. The data has been manipulated and the
-            models are unreliable. Natural climate variations explain all
-            observed changes, and human activities have negligible impact on
-            global temperatures.
+            Select text on any webpage to analyze it for fact-checking.
           </div>
         </section>
 
@@ -603,105 +607,26 @@
 
         <!-- Ready Content -->
         <div class="ready-content">
-          <!-- Classification -->
-          <section id="sp-classification">
-            <div class="classification-badge" data-type="statement">
-              Statement
-            </div>
-            <!-- For Opinion: <div class="classification-badge" data-type="opinion">Opinion</div> -->
-          </section>
-
           <!-- Categories -->
           <section id="sp-categories">
-            <span class="chip">Climate Science</span>
-            <span class="chip">Environmental Policy</span>
-            <span class="chip">Scientific Research</span>
+            <span class="chip">General</span>
           </section>
 
           <!-- Credibility (only for statements) -->
-          <section id="sp-credibility" data-level="low">
-            <div class="credibility-level">Low Credibility</div>
-            <div class="credibility-rationale">
-              Contradicted by overwhelming scientific consensus
-            </div>
+          <section id="sp-credibility" data-level="medium">
+            <div class="credibility-level">Medium Credibility</div>
+            <div class="credibility-rationale">Based on available sources</div>
           </section>
 
           <!-- Related Sources -->
           <section id="sp-sources">
             <h2 class="section-title">Related Sources</h2>
-
-            <a href="#" class="source-card" target="_blank" rel="noopener">
-              <div class="source-header">
-                <h3 class="source-title">
-                  Climate Change: Evidence and Scientific Consensus
-                </h3>
-                <svg
-                  class="external-icon"
-                  width="12"
-                  height="12"
-                  viewBox="0 0 12 12"
-                  fill="currentColor"
-                >
-                  <path
-                    d="M3.5 3c-.28 0-.5.22-.5.5s.22.5.5.5h3.086L2.793 7.793a.5.5 0 1 0 .707.707L7.293 4.707V7.5a.5.5 0 0 0 1 0v-4a.5.5 0 0 0-.5-.5h-4z"
-                  />
-                </svg>
-              </div>
-              <div class="source-domain">nature.com</div>
-              <p class="source-snippet">
-                Multiple lines of evidence confirm that human activities are the
-                primary driver of recent climate change, with over 97%
-                scientific consensus.
+            <div class="empty-state">
+              <p>
+                No sources available. Select text to analyze for related
+                sources.
               </p>
-            </a>
-
-            <a href="#" class="source-card" target="_blank" rel="noopener">
-              <div class="source-header">
-                <h3 class="source-title">IPCC Sixth Assessment Report</h3>
-                <svg
-                  class="external-icon"
-                  width="12"
-                  height="12"
-                  viewBox="0 0 12 12"
-                  fill="currentColor"
-                >
-                  <path
-                    d="M3.5 3c-.28 0-.5.22-.5.5s.22.5.5.5h3.086L2.793 7.793a.5.5 0 1 0 .707.707L7.293 4.707V7.5a.5.5 0 0 0 1 0v-4a.5.5 0 0 0-.5-.5h-4z"
-                  />
-                </svg>
-              </div>
-              <div class="source-domain">ipcc.ch</div>
-              <p class="source-snippet">
-                Comprehensive assessment shows unequivocal evidence that human
-                influence has warmed the planet at a rate unprecedented in at
-                least 2000 years.
-              </p>
-            </a>
-
-            <a href="#" class="source-card" target="_blank" rel="noopener">
-              <div class="source-header">
-                <h3 class="source-title">
-                  NASA Global Climate Change and Global Warming
-                </h3>
-                <svg
-                  class="external-icon"
-                  width="12"
-                  height="12"
-                  viewBox="0 0 12 12"
-                  fill="currentColor"
-                >
-                  <path
-                    d="M3.5 3c-.28 0-.5.22-.5.5s.22.5.5.5h3.086L2.793 7.793a.5.5 0 1 0 .707.707L7.293 4.707V7.5a.5.5 0 0 0 1 0v-4a.5.5 0 0 0-.5-.5h-4z"
-                  />
-                </svg>
-              </div>
-              <div class="source-domain">nasa.gov</div>
-              <p class="source-snippet">
-                Current warming trend is of particular significance because most
-                of it is extremely likely due to human activity since the
-                mid-20th century.
-              </p>
-            </a>
+            </div>
           </section>
         </div>
 
@@ -772,74 +697,6 @@
         </button>
       </footer>
     </div>
-
-    <script>
-      // Toggle selection preview
-      function toggleSelection() {
-        const content = document.getElementById("selection-text");
-        const button = document.querySelector(".toggle-btn");
-
-        if (content.classList.contains("collapsed")) {
-          content.classList.remove("collapsed");
-          button.textContent = "Show less";
-        } else {
-          content.classList.add("collapsed");
-          button.textContent = "Show more";
-        }
-      }
-
-      // Retry function
-      function retry() {
-        const root = document.getElementById("sp-root");
-        root.setAttribute("data-state", "loading");
-
-        // Simulate loading and return to ready state
-        setTimeout(() => {
-          root.setAttribute("data-state", "ready");
-        }, 2000);
-      }
-
-      // Demo: Switch between states (for testing)
-      function switchState(state) {
-        document.getElementById("sp-root").setAttribute("data-state", state);
-      }
-
-      // Demo: Switch between opinion and statement (for testing)
-      function switchClassification(type) {
-        const root = document.getElementById("sp-root");
-        root.setAttribute("data-classification", type);
-
-        const badge = document.querySelector(".classification-badge");
-        badge.setAttribute("data-type", type);
-        badge.textContent = type === "opinion" ? "Opinion" : "Statement";
-      }
-
-      // Keyboard navigation enhancements
-      document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape") {
-          // Close panel or handle escape
-          console.log("Escape pressed - would close panel");
-        }
-      });
-
-      // Handle button press states
-      document.addEventListener("click", function (e) {
-        if (e.target.matches("button, .action-btn")) {
-          e.target.style.transform = "scale(0.95)";
-          setTimeout(() => {
-            e.target.style.transform = "";
-          }, 100);
-        }
-      });
-
-      // Initialize panel
-      document.addEventListener("DOMContentLoaded", function () {
-        // Set initial state
-        const root = document.getElementById("sp-root");
-        root.setAttribute("data-state", "ready");
-        root.setAttribute("data-classification", "statement");
-      });
-    </script>
     <script src="sidepanel.js"></script>
   </body>
 </html>

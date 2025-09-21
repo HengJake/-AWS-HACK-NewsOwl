@@ -13,15 +13,16 @@ class FactCheckCompanion {
   handleTextSelection(event) {
     const selection = window.getSelection()
     const selectedText = selection.toString().trim()
-
-    console.log(selectedText)
+    console.log('Text selected:', selectedText)
 
     if (selectedText.length > 10) {
+      console.log('Text length valid, showing choice card')
       const range = selection.getRangeAt(0)
       const rect = range.getBoundingClientRect()
 
       // Send selected text to sidepanel
       if (chrome.runtime?.id) {
+        console.log('Sending message to sidepanel')
         chrome.runtime.sendMessage({
           action: "updateSidePanel",
           selectedText: selectedText,
@@ -41,10 +42,12 @@ class FactCheckCompanion {
   }
 
   async showChoiceCard(text, rect) {
+    console.log('Creating choice card for text:', text.substring(0, 50) + '...')
     this.hideFactCheckCard()
 
     const card = this.createChoiceCard(text)
     document.body.appendChild(card)
+    console.log('Choice card added to DOM')
 
     // Position the card
     const cardRect = card.getBoundingClientRect()
@@ -91,14 +94,13 @@ class FactCheckCompanion {
         <div class="selected-text-preview">
           "${text.length > 100 ? text.substring(0, 100) + '...' : text}"
         </div>
+        <small class="small-text">Select >10 word for better accuracy</small>
         <div class="choice-buttons">
           <button class="choice-btn yes-btn" id="fact-check-yes">
-            <span>✓</span>
-            <span>Yes, fact-check this</span>
+            <span>Fact Check</span>
           </button>
           <button class="choice-btn no-btn" id="fact-check-no">
-            <span>✕</span>
-            <span>No, dismiss</span>
+            <span>Dismiss</span>
           </button>
         </div>
       </div>
@@ -122,6 +124,8 @@ class FactCheckCompanion {
   }
 
   async handleFactCheckChoice(text, shouldFactCheck) {
+    console.log('User choice:', shouldFactCheck ? 'Yes, fact-check' : 'No, dismiss')
+
     if (shouldFactCheck) {
       // Open side panel if extension context is valid
       if (chrome.runtime?.id) {
@@ -149,6 +153,7 @@ class FactCheckCompanion {
   }
 
   async transformToAnalysisCard(text) {
+    console.log('Transforming to analysis card')
     if (!this.currentCard) return
 
     // Update the card content to show analysis
@@ -203,125 +208,84 @@ class FactCheckCompanion {
   }
 
   async analyzeText(text, card) {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    console.log('Starting API call for text:', text.substring(0, 50) + '...')
+    try {
+      const response = await fetch('https://majb2cj4m6.execute-api.ap-southeast-1.amazonaws.com/check', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ text: text })
+      })
 
-    // Mock analysis results
-    const analysis = this.mockAnalysis(text)
+      console.log('API response status:', response.status)
+      const analysis = await response.json()
+      console.log('API response data:', analysis)
 
-    this.updateCardWithAnalysis(card, analysis)
-  }
+      // Send analysis results to background script for sidepanel
+      if (chrome.runtime?.id) {
+        chrome.runtime.sendMessage({
+          action: "updateSidePanelWithAnalysis",
+          analysis: analysis
+        }).catch(error => {
+          console.log('Could not send analysis to background:', error)
+        })
+      }
 
-  mockAnalysis(text) {
-    // Simple heuristics for demo purposes
-    const isOpinion = /\b(think|believe|feel|opinion|should|must|better|worse|best|worst)\b/i.test(text)
-    const isPolitical = /\b(government|politics|election|vote|democrat|republican|liberal|conservative|policy)\b/i.test(
-      text,
-    )
-
-    const analysisTypes = ["credible", "unverified", "disputed"]
-    const verificationStatus = analysisTypes[Math.floor(Math.random() * analysisTypes.length)]
-
-    const biasTypes = ["left", "center", "right"]
-    const biasDirection = biasTypes[Math.floor(Math.random() * biasTypes.length)]
-    const biasStrength = Math.random() * 100
-
-    return {
-      isOpinion,
-      isPolitical,
-      verificationStatus,
-      biasDirection,
-      biasStrength,
-      sources: [
-        { title: "Reuters Fact Check", url: "https://reuters.com" },
-        { title: "Associated Press", url: "https://apnews.com" },
-        { title: "Snopes", url: "https://snopes.com" },
-      ],
+      this.updateCardWithAnalysis(card, analysis)
+    } catch (error) {
+      console.error('API Error:', error)
+      this.showErrorInCard(card)
     }
   }
 
+  showErrorInCard(card) {
+    console.log('Showing error in card')
+    const typeElement = card.querySelector("#fact-type")
+    typeElement.innerHTML = "<span>❌</span><span>Analysis Failed</span>"
+    typeElement.className = "fact-check-type error"
+  }
+
+
+
   updateCardWithAnalysis(card, analysis) {
+    console.log('Updating card with analysis results')
     const typeElement = card.querySelector("#fact-type")
     const verificationElement = card.querySelector("#verification-status")
-    const biasElement = card.querySelector("#bias-indicator")
     const expandToggle = card.querySelector("#expand-toggle")
     const sourcesElement = card.querySelector("#related-sources")
 
-    // Update type
-    if (analysis.isOpinion) {
+    // Update type based on API response
+    if (analysis.type === "opinion") {
       typeElement.innerHTML = "<span>💭</span><span>Opinion</span>"
       typeElement.className = "fact-check-type opinion"
     } else {
-      typeElement.innerHTML = "<span>📊</span><span>Factual Statement</span>"
+      typeElement.innerHTML = "<span>📊</span><span>Statement</span>"
       typeElement.className = "fact-check-type factual"
     }
 
-    // Show verification status for factual statements
-    if (!analysis.isOpinion) {
-      verificationElement.style.display = "flex"
-      verificationElement.className = `verification-status ${analysis.verificationStatus}`
+    // Show credibility status
+    verificationElement.style.display = "flex"
+    verificationElement.className = `verification-status ${analysis.credibility}`
 
-      const statusIcons = {
-        credible: "✅",
-        unverified: "⚠️",
-        disputed: "❌",
-      }
-
-      const statusTexts = {
-        credible: "Verified by trusted sources",
-        unverified: "Unable to verify",
-        disputed: "Disputed by fact-checkers",
-      }
-
-      verificationElement.innerHTML = `
-        <span>${statusIcons[analysis.verificationStatus]}</span>
-        <span>${statusTexts[analysis.verificationStatus]}</span>
-      `
+    const statusIcons = {
+      high: "✅",
+      medium: "⚠️",
+      low: "❌",
     }
 
-    // Show bias indicator for political content
-    if (analysis.isPolitical) {
-      biasElement.style.display = "flex"
-      biasElement.innerHTML = `
-        <span>⚖️</span>
-        <span>Political content detected</span>
-        <div class="bias-bar">
-          <div class="bias-fill ${analysis.biasDirection}" style="width: ${analysis.biasStrength}%"></div>
-        </div>
-      `
+    const statusTexts = {
+      high: "High credibility",
+      medium: "Medium credibility",
+      low: "Low credibility",
     }
 
-    // Add sources
-    sourcesElement.innerHTML = analysis.sources
-      .map((source) => `<a href="${source.url}" class="source-item" target="_blank">${source.title}</a>`)
-      .join("")
+    verificationElement.innerHTML = `
+      <span>${statusIcons[analysis.credibility]}</span>
+      <span>${statusTexts[analysis.credibility]}</span>
+    `
 
-    // Show expand toggle
-    expandToggle.style.display = "flex"
-  }
-
-  togglePin(pinBtn) {
-    this.isPinned = !this.isPinned
-    pinBtn.classList.toggle("pinned")
-    pinBtn.title = this.isPinned ? "Unpin card" : "Pin card"
-  }
-
-  toggleExpand(card) {
-    const expandContent = card.querySelector("#expand-content")
-    const expandToggle = card.querySelector("#expand-toggle")
-    const arrow = expandToggle.querySelector("span:last-child")
-
-    expandContent.classList.toggle("open")
-    arrow.textContent = expandContent.classList.contains("open") ? "▲" : "▼"
-    expandToggle.querySelector("span:first-child").textContent = expandContent.classList.contains("open")
-      ? "Show less"
-      : "Show more details"
-  }
-        </div>
-      `
-    }
-
-    // Add sources
+    // Add sources from API
     sourcesElement.innerHTML = analysis.sources
       .map((source) => `<a href="${source.url}" class="source-item" target="_blank">${source.title}</a>`)
       .join("")
@@ -350,10 +314,16 @@ class FactCheckCompanion {
 
   hideFactCheckCard() {
     if (this.currentCard && !this.isPinned) {
-      if (this.currentCard.parentNode) {
-        this.currentCard.parentNode.removeChild(this.currentCard)
-      }
-      this.currentCard = null
+      this.currentCard.style.opacity = "0"
+      this.currentCard.style.transform = "translateY(10px)"
+      this.currentCard.style.pointerEvents = "none"
+
+      setTimeout(() => {
+        if (this.currentCard && this.currentCard.parentNode) {
+          this.currentCard.parentNode.removeChild(this.currentCard)
+        }
+        this.currentCard = null
+      }, 200)
     }
   }
 }

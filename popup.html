@@ -1,156 +1,1029 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <style>
-    body {
-      width: 300px;
-      padding: 20px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      margin: 0;
-    }
-    
-    .header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    
-    .logo {
-      font-size: 32px;
-      margin-bottom: 8px;
-    }
-    
-    h1 {
-      font-size: 18px;
-      margin: 0;
-      color: #374151;
-    }
-    
-    .subtitle {
-      font-size: 14px;
-      color: #6b7280;
-      margin-top: 4px;
-    }
-    
-    .stats {
-      background: #f8fafc;
-      border-radius: 8px;
-      padding: 16px;
-      margin: 16px 0;
-    }
-    
-    .stat-item {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      font-size: 14px;
-    }
-    
-    .stat-item:last-child {
-      margin-bottom: 0;
-    }
-    
-    .settings {
-      border-top: 1px solid #e5e7eb;
-      padding-top: 16px;
-      margin-top: 16px;
-    }
-    
-    .setting-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      font-size: 14px;
-    }
-    
-    .toggle {
-      width: 40px;
-      height: 20px;
-      background: #d1d5db;
-      border-radius: 10px;
-      position: relative;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    
-    .toggle.active {
-      background: #3b82f6;
-    }
-    
-    .toggle::after {
-      content: '';
-      width: 16px;
-      height: 16px;
-      background: white;
-      border-radius: 50%;
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      transition: transform 0.2s;
-    }
-    
-    .toggle.active::after {
-      transform: translateX(20px);
-    }
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FactCheck Popup</title>
+    <style>
+      :root {
+        /* Light theme colors */
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8f9fa;
+        --bg-tertiary: #e9ecef;
+        --text-primary: #212529;
+        --text-secondary: #6c757d;
+        --text-muted: #868e96;
+        --border-color: #dee2e6;
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+        --accent-primary: #0066cc;
+        --accent-hover: #0052a3;
+        --success-color: #28a745;
+        --warning-color: #ffc107;
+        --danger-color: #dc3545;
+        --info-color: #17a2b8;
 
-    .top-nav {
-      display:flex;
-      flex-direction: row;
-      gap: 1rem;
-    }
+        /* Spacing */
+        --spacing-xs: 4px;
+        --spacing-sm: 8px;
+        --spacing-md: 16px;
+        --spacing-lg: 24px;
 
-    .top-nav li {
-      text-decoration: none;
-    }
+        /* Border radius */
+        --radius-sm: 4px;
+        --radius-md: 8px;
+        --radius-lg: 12px;
 
-  </style>
-</head>
-<body>
-  <div>
-    <div>
-      <ul class="top-nav">
-        <li>History</li>
-        <li>Account</li>
-      </ul>
+        /* Typography */
+        --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+          sans-serif;
+        --font-size-xs: 11px;
+        --font-size-sm: 12px;
+        --font-size-base: 14px;
+        --font-size-lg: 16px;
+        --line-height: 1.4;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg-primary: #1a1a1a;
+          --bg-secondary: #2d2d2d;
+          --bg-tertiary: #404040;
+          --text-primary: #ffffff;
+          --text-secondary: #b3b3b3;
+          --text-muted: #888888;
+          --border-color: #404040;
+          --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+          --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.4);
+          --accent-primary: #4da6ff;
+          --accent-hover: #66b3ff;
+        }
+      }
+
+      [data-theme="light"] {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8f9fa;
+        --bg-tertiary: #e9ecef;
+        --text-primary: #212529;
+        --text-secondary: #6c757d;
+        --text-muted: #868e96;
+        --border-color: #dee2e6;
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+        --accent-primary: #0066cc;
+        --accent-hover: #0052a3;
+      }
+
+      [data-theme="dark"] {
+        --bg-primary: #1a1a1a;
+        --bg-secondary: #2d2d2d;
+        --bg-tertiary: #404040;
+        --text-primary: #ffffff;
+        --text-secondary: #b3b3b3;
+        --text-muted: #888888;
+        --border-color: #404040;
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.4);
+        --accent-primary: #4da6ff;
+        --accent-hover: #66b3ff;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--font-family);
+        font-size: var(--font-size-base);
+        line-height: var(--line-height);
+        color: var(--text-primary);
+        background-color: var(--bg-primary);
+        width: 380px;
+        max-width: 400px;
+        min-width: 320px;
+        min-height: 500px;
+        max-height: 600px;
+        overflow: hidden;
+        transition: all 0.2s ease;
+      }
+
+      .popup-container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        max-height: 600px;
+      }
+
+      /* Top Bar */
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--spacing-md);
+        background-color: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-color);
+        flex-shrink: 0;
+      }
+
+      .app-name {
+        font-weight: 600;
+        font-size: var(--font-size-lg);
+        color: var(--text-primary);
+      }
+
+      .user-info {
+        padding: var(--spacing-xs);
+        border-radius: var(--spacing-md);
+        font-size: var(--font-size-sm);
+        display: flex;
+        align-items: center;
+        color:var(--text-primary);
+        gap: var(--spacing-xs);
+        border: none;
+        background: none;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+      
+      .user-info:hover {
+        background-color: var(--bg-tertiary);
+      }
+
+      .user-avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: var(--accent-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: var(--font-size-xs);
+      }
+
+      /* Main Content Area */
+      .main-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: var(--spacing-md);
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-lg);
+      }
+
+      .section-title {
+        margin-bottom: var(--spacing-sm);
+        font-weight: 600;
+        font-size: var(--font-size-lg);
+        color: var(--text-primary);
+      }
+
+      /* Analysis History */
+      .history-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+      }
+
+      .history-item {
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-md);
+        box-shadow: var(--shadow);
+        transition: all 0.2s ease;
+      }
+
+      .history-item:hover {
+        box-shadow: var(--shadow-hover);
+        transform: translateY(-1px);
+      }
+
+      .history-item:focus-within {
+        outline: 2px solid var(--accent-primary);
+        outline-offset: 2px;
+      }
+
+      .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .history-date {
+        font-size: var(--font-size-xs);
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+      }
+
+      .history-badges {
+        display: flex;
+        gap: var(--spacing-xs);
+        flex-wrap: wrap;
+      }
+
+      .badge {
+        padding: 2px var(--spacing-sm);
+        border-radius: var(--radius-sm);
+        font-size: var(--font-size-xs);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .badge-opinion {
+        background-color: var(--info-color);
+        color: white;
+      }
+
+      .badge-statement {
+        background-color: var(--accent-primary);
+        color: white;
+      }
+
+      .badge-credibility-high {
+        background-color: var(--success-color);
+        color: white;
+      }
+
+      .badge-credibility-medium {
+        background-color: var(--warning-color);
+        color: black;
+      }
+
+      .badge-credibility-low {
+        background-color: var(--danger-color);
+        color: white;
+      }
+
+      .source-list {
+        margin-top: 1rem;
+        border-radius: 10px;
+        background-color: gray;
+        padding: 8px;
+      }
+
+      .source-list ul {
+        list-style: none;
+      }
+
+      .source-list ul li a {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 0.7rem;
+        color: var(--text-primary);
+        text-decoration: none;
+        transition: all 0.1s ease-in-out;
+        display: block; /* This ensures the ellipsis works properly */
+      }
+
+      .source-list ul li a:hover {
+        color: var(--text-secondary);
+        text-decoration: underline;
+      }
+
+      .source-list ul li a:last-of-type {
+        margin-bottom: 0;
+      }
+
+      .history-text {
+        font-size: var(--font-size-sm);
+        color: var(--text-secondary);
+        margin-bottom: var(--spacing-sm);
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        line-height: 1.3;
+      }
+
+      .category-chips {
+        display: flex;
+        gap: var(--spacing-xs);
+        flex-wrap: wrap;
+      }
+
+      .chip {
+        background-color: var(--bg-tertiary);
+        color: var(--text-secondary);
+        padding: var(--spacing-xs) var(--spacing-sm);
+        border-radius: var(--radius-lg);
+        font-size: var(--font-size-xs);
+        font-weight: 500;
+      }
+
+      /* Empty State */
+      .empty-state {
+        text-align: center;
+        padding: var(--spacing-lg);
+        color: var(--text-secondary);
+      }
+
+      .empty-illustration {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto var(--spacing-md);
+        opacity: 0.6;
+      }
+
+      .empty-title {
+        font-weight: 600;
+        font-size: var(--font-size-lg);
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .empty-description {
+        font-size: var(--font-size-sm);
+        line-height: 1.5;
+      }
+
+      /* Settings Section */
+      .settings-section {
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-md);
+      }
+
+      .setting-group {
+        margin-bottom: var(--spacing-md);
+      }
+
+      .setting-group:last-child {
+        margin-bottom: 0;
+      }
+
+      .setting-label {
+        display: block;
+        font-weight: 500;
+        font-size: var(--font-size-sm);
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-xs);
+      }
+
+      .theme-selector {
+        display: flex;
+        gap: var(--spacing-sm);
+      }
+
+      .theme-option {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        font-size: var(--font-size-sm);
+      }
+
+      .theme-option input[type="radio"] {
+        accent-color: var(--accent-primary);
+      }
+
+      .filter-controls {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+      }
+
+      select {
+        padding: var(--spacing-sm);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        font-size: var(--font-size-sm);
+        font-family: var(--font-family);
+      }
+
+      select:focus {
+        outline: 2px solid var(--accent-primary);
+        outline-offset: 2px;
+        border-color: var(--accent-primary);
+      }
+
+      /* Help Section */
+      .help-section {
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-md);
+      }
+
+      .help-instruction {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+        font-size: var(--font-size-sm);
+        color: var(--text-secondary);
+      }
+
+      .help-icon {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      /* Scrollbar Styling */
+      .main-content::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .main-content::-webkit-scrollbar-track {
+        background: var(--bg-tertiary);
+        border-radius: 3px;
+      }
+
+      .main-content::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 3px;
+      }
+
+      .main-content::-webkit-scrollbar-thumb:hover {
+        background: var(--text-muted);
+      }
+
+      /* Icons */
+      .icon {
+        width: 16px;
+        height: 16px;
+        fill: currentColor;
+      }
+
+      .icon-sm {
+        width: 12px;
+        height: 12px;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 350px) {
+        body {
+          width: 320px;
+        }
+
+        .top-bar {
+          padding: var(--spacing-sm);
+        }
+
+        .main-content {
+          padding: var(--spacing-sm);
+        }
+
+        .history-item {
+          padding: var(--spacing-sm);
+        }
+      }
+
+      /* Focus management */
+      *:focus {
+        outline: 2px solid var(--accent-primary);
+        outline-offset: 2px;
+      }
+
+      button,
+      select,
+      input,
+      [tabindex] {
+        outline: none;
+      }
+
+      button:focus,
+      select:focus,
+      input:focus,
+      [tabindex]:focus {
+        outline: 2px solid var(--accent-primary);
+        outline-offset: 2px;
+      }
+      
+      /* Profile View Styles */
+      .profile-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-sm);
+      }
+      
+      .back-btn {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        background: none;
+        border: none;
+        color: var(--accent-primary);
+        cursor: pointer;
+        font-size: var(--font-size-sm);
+        padding: var(--spacing-xs);
+        border-radius: var(--radius-sm);
+      }
+      
+      .back-btn:hover {
+        background-color: var(--bg-secondary);
+      }
+      
+      .profile-info {
+        text-align: center;
+        padding: var(--spacing-lg);
+        background-color: var(--bg-secondary);
+        border-radius: var(--radius-md);
+        margin-bottom: var(--spacing-sm);
+      }
+      
+      .user-avatar-large {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: var(--accent-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: var(--font-size-lg);
+        margin: 0 auto var(--spacing-md);
+      }
+      
+      .profile-info h3 {
+        margin: 0 0 var(--spacing-xs) 0;
+        color: var(--text-primary);
+      }
+      
+      .profile-info p {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: var(--font-size-sm);
+      }
+      
+      .stats-section {
+        background-color: var(--bg-secondary);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-md);
+      }
+      
+      .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-md);
+      }
+      
+      .stat-item {
+        text-align: center;
+        padding: var(--spacing-md);
+        background-color: var(--bg-primary);
+        border-radius: var(--radius-sm);
+      }
+      
+      .stat-number {
+        font-size: var(--font-size-lg);
+        font-weight: 600;
+        color: var(--accent-primary);
+        margin-bottom: var(--spacing-xs);
+      }
+      
+      .stat-label {
+        font-size: var(--font-size-xs);
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .logout-btn {
+        margin-top: var(--spacing-sm);
+        border-radius: var(--spacing-sm);
+        background-color: rgb(194, 8, 8);
+        color: var(--text-secondary);
+        border: none;
+        padding: var(--spacing-sm);
+        transition: all 0.2s ease-in-out;
+      }
+      
+      .logout-btn:hover {
+        background-color: rgb(214, 86, 86);
+      }
+      /* View transitions */
+      .main-content {
+        transition: opacity 0.2s ease;
+      }
+
+    </style>
+  </head>
+  <body data-theme="system">
+    <div class="popup-container">
+      <!-- Top Bar -->
+      <div class="top-bar">
+        <div class="app-name">NewsOwl</div>
+        <button class="user-info" id="user-info-btn">
+          <div class="user-avatar">JD</div>
+          <span>john.doe@email.com</span>
+        </button>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content" id="main-view">
+        <!-- Analysis History Section -->
+        <section class="analysis-section">
+          <h2 class="section-title">Analysis History</h2>
+
+          <!-- History List with Sample Data -->
+          <!-- History List with Sample Data -->
+          <div class="history-list">
+            <div class="history-item">
+              <div
+                class="history-header"
+                tabindex="0"
+                role="button"
+                aria-expanded="false"
+                aria-controls="sources-1"
+                onclick="toggleSources(event)"
+                onkeydown="if(event.key==='Enter' || event.key===' ') toggleSources(event)"
+              >
+                <div class="history-date">
+                  <svg
+                    class="icon icon-sm"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"
+                    />
+                  </svg>
+                  Today, 10:15 AM
+                </div>
+                <div class="history-badges">
+                  <span class="badge badge-statement">Statement</span>
+                  <span class="badge badge-credibility-medium">Medium</span>
+                </div>
+              </div>
+              <div class="history-text">
+                "Malaysia to trial new immigration system at land checkpoints
+                and airports starting 22 September 2025 to enhance border
+                security."
+              </div>
+              <div class="category-chips">
+                <span class="chip">Government</span>
+                <span class="chip">Immigration</span>
+              </div>
+              <div class="source-list" id="sources-1">
+                <p style="margin-bottom: 5px">Sources</p>
+                <ul>
+                  <li>
+                    <a
+                      href="https://www.humanresourcesonline.net/malaysia-to-trial-new-immigration-system"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Human Resources Online - Malaysia trial new immigration
+                      system</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="https://www.bernama.com/en/general/news.php?id=2469373"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Bernama - Government plans border security update</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="history-item">
+              <div
+                class="history-header"
+                tabindex="0"
+                role="button"
+                aria-expanded="false"
+                aria-controls="sources-2"
+                onclick="toggleSources(event)"
+                onkeydown="if(event.key==='Enter' || event.key===' ') toggleSources(event)"
+              >
+                <div class="history-date">
+                  <svg
+                    class="icon icon-sm"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"
+                    />
+                  </svg>
+                  Sept 19, 8:30 PM
+                </div>
+                <div class="history-badges">
+                  <span class="badge badge-opinion">Opinion</span>
+                </div>
+              </div>
+              <div class="history-text">
+                "I believe the government's efforts to expand digital
+                infrastructure will greatly improve education access in rural
+                Malaysia."
+              </div>
+              <div class="category-chips">
+                <span class="chip">Technology</span>
+                <span class="chip">Education</span>
+              </div>
+              <div class="source-list" id="sources-2">
+                <p style="margin-bottom: 5px">Sources</p>
+                <ul>
+                  <li>
+                    <a
+                      href="https://www.thestar.com.my/tech/digital-infrastructure-rural-malaysia"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >The Star - Digital infrastructure expansion in rural
+                      Malaysia</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="https://www.malaysiakini.com/news/education-technology-rural-areas"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Malaysiakini - Education technology initiatives</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="history-item">
+              <div
+                class="history-header"
+                tabindex="0"
+                role="button"
+                aria-expanded="false"
+                aria-controls="sources-3"
+                onclick="toggleSources(event)"
+                onkeydown="if(event.key==='Enter' || event.key===' ') toggleSources(event)"
+              >
+                <div class="history-date">
+                  <svg
+                    class="icon icon-sm"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"
+                    />
+                  </svg>
+                  Sept 18, 4:00 PM
+                </div>
+                <div class="history-badges">
+                  <span class="badge badge-statement">Statement</span>
+                  <span class="badge badge-credibility-high">High</span>
+                </div>
+              </div>
+              <div class="history-text">
+                "Sabah government cancels Malaysia Day state-level celebrations
+                due to recent deadly landslides impacting multiple communities."
+              </div>
+              <div class="category-chips">
+                <span class="chip">Disaster</span>
+                <span class="chip">Government</span>
+              </div>
+              <div class="source-list" id="sources-3">
+                <p style="margin-bottom: 5px">Sources</p>
+                <ul>
+                  <li>
+                    <a
+                      href="https://www.nst.com.my/news/nation/2025/09/1276128/news9-todays-top-headlines-sept-16-2025-watch"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >New Straits Times - Sabah landslides</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="https://www.youtube.com/watch?v=pHxmI6UL2g0"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >YouTube News Coverage</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="history-item">
+              <div
+                class="history-header"
+                tabindex="0"
+                role="button"
+                aria-expanded="false"
+                aria-controls="sources-4"
+                onclick="toggleSources(event)"
+                onkeydown="if(event.key==='Enter' || event.key===' ') toggleSources(event)"
+              >
+                <div class="history-date">
+                  <svg
+                    class="icon icon-sm"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"
+                    />
+                  </svg>
+                  Sept 17, 11:45 AM
+                </div>
+                <div class="history-badges">
+                  <span class="badge badge-statement">Statement</span>
+                  <span class="badge badge-credibility-low">Low</span>
+                </div>
+              </div>
+              <div class="history-text">
+                "Rumors stating Malaysia plans to ban cryptocurrency trading
+                have been denied by government authorities."
+              </div>
+              <div class="category-chips">
+                <span class="chip">Finance</span>
+                <span class="chip">Cryptocurrency</span>
+              </div>
+              <div class="source-list" id="sources-4">
+                <p style="margin-bottom: 5px">Sources</p>
+                <ul>
+                  <li>
+                    <a
+                      href="https://www.freemalaysiatoday.com/category/nation/2025/09/17/malaysia-cryptocurrency-ban-rumors-denied"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Free Malaysia Today - Cryptocurrency ban rumors denied</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="https://www.thestar.com.my/business/finance/cryptocurrency-regulations-malaysia"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >The Star - Malaysia cryptocurrency regulations update</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="history-item">
+              <div
+                class="history-header"
+                tabindex="0"
+                role="button"
+                aria-expanded="false"
+                aria-controls="sources-5"
+                onclick="toggleSources(event)"
+                onkeydown="if(event.key==='Enter' || event.key===' ') toggleSources(event)"
+              >
+                <div class="history-date">
+                  <svg
+                    class="icon icon-sm"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"
+                    />
+                  </svg>
+                  Sept 15, 9:30 AM
+                </div>
+                <div class="history-badges">
+                  <span class="badge badge-opinion">Opinion</span>
+                </div>
+              </div>
+              <div class="history-text">
+                "The growing emphasis on renewable energy in Malaysia promises a
+                greener and more sustainable economic future."
+              </div>
+              <div class="category-chips">
+                <span class="chip">Environment</span>
+                <span class="chip">Energy</span>
+              </div>
+              <div class="source-list" id="sources-5">
+                <p style="margin-bottom: 5px">Sources</p>
+                <ul>
+                  <li>
+                    <a
+                      href="https://www.nst.com.my/business/renewable-energy-malaysia-initiatives"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >New Straits Times - Malaysia renewable energy
+                      initiatives</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="https://www.thestar.com.my/business/sustainable-energy-economic-future"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >The Star - Sustainable energy and economic growth</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty State (hidden when there are items) -->
+          <div class="empty-state" style="display: none">
+            <svg
+              class="empty-illustration"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                fill="currentColor"
+                d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"
+              />
+            </svg>
+            <h3 class="empty-title">No analyses yet</h3>
+            <p class="empty-description">
+              Start by highlighting text on any webpage, then choose "Analyze"
+              from the floating card to check facts and verify information.
+            </p>
+          </div>
+        </section>
+
+        <!-- Help Section -->
+        <section class="help-section">
+          <h3 class="section-title">How to Use</h3>
+          <div class="help-instruction">
+            <svg class="help-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+              />
+            </svg>
+            <span>
+              Highlight any text on a webpage, then choose "Analyze" from the
+              floating card to verify facts and check credibility. Your analysis
+              history will appear here.
+            </span>
+          </div>
+        </section>
+      </div>
+      
+      <!-- Profile View (hidden by default) -->
+      <div class="main-content" id="profile-view" style="display: none;">
+        <section class="profile-section">
+          <div class="profile-header">
+            <button class="back-btn" id="back-btn">
+              <svg class="icon" viewBox="0 0 24 24">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+              </svg>
+              Back
+            </button>
+            <h2 class="section-title">Profile & Settings</h2>
+          </div>
+          
+          <div class="profile-info">
+            <div class="user-avatar-large">JD</div>
+            <h3>John Doe</h3>
+            <p>john.doe@email.com</p>
+          </div>
+          
+          <div class="settings-section">
+            <h3 class="section-title">Preferences</h3>
+            <div class="setting-group">
+              <label class="setting-label">Theme</label>
+              <div class="theme-selector">
+                <label class="theme-option">
+                  <input type="radio" name="theme" value="light" id="theme-light">
+                  Light
+                </label>
+                <label class="theme-option">
+                  <input type="radio" name="theme" value="dark" id="theme-dark">
+                  Dark
+                </label>
+                <label class="theme-option">
+                  <input type="radio" name="theme" value="system" id="theme-system" checked>
+                  System
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="stats-section">
+            <h3 class="section-title">Usage Statistics</h3>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <div class="stat-number">42</div>
+                <div class="stat-label">Analyses</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">18</div>
+                <div class="stat-label">Sources Verified</div>
+              </div>
+            </div>
+          </div>
+
+          <button class="logout-btn"">Log Out</button>
+        </section>
+      </div>
     </div>
-    <div class="header">
-      <div class="logo">🔍</div>    
-      <h1>Fact Check Companion</h1>
-      <div class="subtitle">Instant fact-checking & bias detection</div>
-    </div>
-  </div>
-  
-  <div class="stats">
-    <div class="stat-item">
-      <span>Facts checked today:</span>
-      <strong id="facts-checked">0</strong>
-    </div>
-    <div class="stat-item">
-      <span>Bias alerts:</span>
-      <strong id="bias-alerts">0</strong>
-    </div>
-    <div class="stat-item">
-      <span>Sources verified:</span>
-      <strong id="sources-verified">0</strong>
-    </div>
-  </div>
-  
-  <div class="settings">
-    <div class="setting-item">
-      <span>Enable fact-checking</span>
-      <div class="toggle active" id="fact-check-toggle"></div>
-    </div>
-    <div class="setting-item">
-      <span>Show bias indicators</span>
-      <div class="toggle active" id="bias-toggle"></div>
-    </div>
-    <div class="setting-item">
-      <span>Auto-expand details</span>
-      <div class="toggle" id="auto-expand-toggle"></div>
-    </div>
-  </div>
-  
-  <script src="popup.js"></script>
-</body>
+    <script src="popup.js"></script>
+  </body>
 </html>

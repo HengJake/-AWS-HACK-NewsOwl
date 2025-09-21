@@ -228,13 +228,13 @@
   border-radius: 8px;
   font-style: italic;
   color: #6b7280;
-  margin-bottom: 16px;
   border-left: 3px solid #3b82f6;
 }
 
 .choice-buttons {
   display: flex;
   gap: 8px;
+  margin-top: 16px;
 }
 
 .choice-btn {
@@ -340,5 +340,9 @@
 
   .card-action-btn:hover {
     background-color: #374151;
+  }
+
+  .small-text {
+    color: rgb(160, 160, 160);
   }
 }
