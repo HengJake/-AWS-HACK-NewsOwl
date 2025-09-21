@@ -552,9 +552,96 @@
         display: none;
       }
 
+      /* Hide/show content based on analysis type */
+      #sp-root[data-analysis-type="text"] #sp-image-preview {
+        display: none;
+      }
+      #sp-root[data-analysis-type="image"] #sp-selection {
+        display: none;
+      }
+      #sp-root[data-analysis-type="image"] #sp-image-preview {
+        display: block;
+      }
+
       /* Hide credibility for opinion */
       #sp-root[data-classification="opinion"] #sp-credibility {
         display: none;
+      }
+
+      /* Image Preview Styles */
+      #sp-image-preview {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: var(--space-4);
+      }
+
+      .image-preview-container {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+      }
+
+      .image-info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+      }
+
+      .image-filename {
+        font-weight: 600;
+        color: var(--fg);
+        font-size: var(--font-size-sm);
+      }
+
+      .image-status {
+        font-size: var(--font-size-xs);
+        color: var(--fg-secondary);
+      }
+
+      /* Image Analysis Results */
+      #sp-image-labels {
+        margin-top: var(--space-4);
+      }
+
+      .label-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-2) 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .label-item:last-child {
+        border-bottom: none;
+      }
+
+      .label-name {
+        font-size: var(--font-size-sm);
+        color: var(--fg);
+      }
+
+      .label-confidence {
+        font-size: var(--font-size-xs);
+        color: var(--fg-secondary);
+        background: var(--bg-secondary);
+        padding: var(--space-1) var(--space-2);
+        border-radius: var(--radius-sm);
+      }
+
+      #sp-ocr-text {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: var(--space-4);
+        margin-top: var(--space-4);
+      }
+
+      .ocr-content {
+        font-style: italic;
+        color: var(--fg-secondary);
+        border-left: 3px solid var(--accent);
+        padding-left: var(--space-3);
       }
     </style>
   </head>
@@ -582,6 +669,31 @@
         <section id="sp-selection">
           <div class="selection-content collapsed" id="selection-text">
             Select text on any webpage to analyze it for fact-checking.
+          </div>
+        </section>
+
+        <!-- Image Preview (hidden by default) -->
+        <section id="sp-image-preview" style="display: none">
+          <div class="image-preview-container">
+            <img
+              id="preview-image"
+              src=""
+              alt="Analyzing image"
+              style="
+                max-width: 100%;
+                height: auto;
+                border-radius: var(--radius-md);
+                border: 1px solid var(--border);
+              "
+            />
+            <div class="image-info">
+              <div class="image-filename" id="image-filename">
+                Image Analysis
+              </div>
+              <div class="image-status" id="image-status">
+                Analyzing content...
+              </div>
+            </div>
           </div>
         </section>
 
@@ -618,15 +730,75 @@
             <div class="credibility-rationale">Based on available sources</div>
           </section>
 
+          <!-- Image Labels (only for image analysis) -->
+          <section id="sp-image-labels" style="display: none">
+            <h2 class="section-title">Detected Content</h2>
+            <div class="labels-list"></div>
+          </section>
+
           <!-- Related Sources -->
           <section id="sp-sources">
             <h2 class="section-title">Related Sources</h2>
-            <div class="empty-state">
-              <p>
-                No sources available. Select text to analyze for related
-                sources.
+            <a
+              href="https://www.thevibes.com/articles/news/112938/tiger-carcass-was-for-black-market-expected-to-fetch-up-to-rm300k"
+              class="source-card"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="source-header">
+                <h3 class="source-title">
+                  Tiger carcass was for black market, expected to fetch up to
+                  RM300k
+                </h3>
+                <svg
+                  class="external-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M3.5 3c-.28 0-.5.22-.5.5s.22.5.5.5h3.086L2.793 7.793a.5.5 0 1 0 .707.707L7.293 4.707V7.5a.5.5 0 0 0 1 0v-4a.5.5 0 0 0-.5-.5h-4z"
+                  />
+                </svg>
+              </div>
+              <div class="source-domain">the Vibes.com</div>
+              <p class="source-snippet">
+                THE carcass of a tiger found dead in a car with three
+                individuals in Felda Tenggaroh, Mersing in Johor is believed to
+                be for sale on the black market.
               </p>
-            </div>
+            </a>
+            <a
+              href="https://www.straitstimes.com/asia/se-asia/tiger-carcass-in-car-boot-sparks-outrage-in-malaysia"
+              class="source-card"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="source-header">
+                <h3 class="source-title">
+                  Tiger carcass in car boot sparks outrage in Malaysia
+                </h3>
+                <svg
+                  class="external-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M3.5 3c-.28 0-.5.22-.5.5s.22.5.5.5h3.086L2.793 7.793a.5.5 0 1 0 .707.707L7.293 4.707V7.5a.5.5 0 0 0 1 0v-4a.5.5 0 0 0-.5-.5h-4z"
+                  />
+                </svg>
+              </div>
+              <div class="source-domain">The StraitsTimes</div>
+              <p class="source-snippet">
+                KUALA LUMPUR – Malaysian wildlife and political groups reacted
+                with outrage on Sept 18 after the carcass of a critically
+                endangered Malayan tiger was discovered in the back of a car,
+                leading to the arrest of three suspects.
+              </p>
+            </a>
           </section>
         </div>
 

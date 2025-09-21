@@ -15,37 +15,7 @@
   ],
   "content_scripts": [
     {
-      "matches": [
-        "*://*.channelnewsasia.com/*",
-        "*://*.malaysiakini.com/*",
-        "*://*.thestar.com.my/*",
-        "*://*.freemalaysiatoday.com/*",
-        "*://*.malaymail.com/*",
-        "*://*.nst.com.my/*",
-        "*://*.theedgemarkets.com/*",
-        "*://*.thesundaily.my/*",
-        "*://*.thevibes.com/*",
-        "*://*.malaysianow.com/*",
-        "*://*.theborneopost.com/*",
-
-        "*://*.nytimes.com/*",
-        "*://*.cnn.com/*",
-        "*://*.reuters.com/*",
-        "*://*.wsj.com/*",
-        "*://*.bbc.com/*",
-        "*://*.npr.org/*",
-        "*://news.google.com/*",
-        "*://*.foxnews.com/*",
-        "*://*.nbcnews.com/*",
-        "*://*.washingtonpost.com/*",
-
-        "*://*.facebook.com/*",
-        "*://*.twitter.com/*",
-        "*://*.x.com/*",
-        "*://*.instagram.com/*",
-        "*://*.youtube.com/*",
-        "*://*.reddit.com/*"
-      ],
+      "matches": ["*://*/*"],
       "js": ["content.js"],
       "css": ["content.css"],
       "run_at": "document_end"
@@ -65,5 +35,11 @@
     "16": "icons/Untitled_design_2.png",
     "48": "icons/Untitled_design_2.png",
     "128": "icons/Untitled_design_2.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["mockData.js"],
+      "matches": ["*://*/*"]
+    }
+  ]
 }

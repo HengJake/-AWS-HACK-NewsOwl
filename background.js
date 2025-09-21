@@ -92,5 +92,155 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     })
 
     sendResponse({ success: true })
+  } else if (request.action === "openSidePanelForImage") {
+    console.log('Background: Opening sidepanel for image analysis')
+    // Store the image info for the side panel
+    chrome.storage.local.set({
+      analyzingImage: {
+        src: request.imageSrc,
+        alt: request.imageAlt
+      },
+      sourceUrl: request.url,
+      timestamp: request.timestamp,
+      tabId: sender.tab.id
+    })
+
+    // Open the side panel
+    chrome.sidePanel.open({
+      windowId: sender.tab.windowId
+    }).then(() => {
+      console.log('Background: Sidepanel opened for image analysis')
+      
+      // Send image info to sidepanel
+      chrome.runtime.sendMessage({
+        action: "updateSidePanelForImage",
+        imageSrc: request.imageSrc,
+        imageAlt: request.imageAlt
+      }).catch(() => {
+        console.log('Sidepanel not available to receive image info')
+      })
+      
+      // Start mock image analysis
+      performMockImageAnalysis(request.imageSrc, request.imageAlt)
+      
+      sendResponse({ success: true, message: "Side panel opened for image analysis" })
+    }).catch((error) => {
+      console.error("Error opening side panel for image:", error)
+      sendResponse({ success: false, error: error.message })
+    })
+
+    // Return true to indicate we'll send a response asynchronously
+    return true
   }
 })
+
+// Mock image analysis function
+async function performMockImageAnalysis(imageSrc, imageAlt) {
+  console.log('Background: Starting mock image analysis')
+  
+  try {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    
+    // Create a mock image element to determine response type
+    const mockImg = {
+      src: imageSrc,
+      alt: imageAlt || '',
+      className: '',
+      width: 300, // Default size for mock
+      height: 200
+    }
+    
+    // Get mock response (we'll need to include the mock data in background)
+    const mockResponse = getMockImageAnalysisResponse(mockImg)
+    
+    console.log('Background: Mock image analysis complete:', mockResponse)
+    
+    // Store results
+    chrome.storage.local.set({
+      latestImageAnalysis: mockResponse
+    })
+    
+    // Send to sidepanel
+    chrome.runtime.sendMessage({
+      action: "imageAnalysisComplete",
+      analysis: mockResponse
+    }).catch(() => {
+      console.log('Sidepanel not available to receive image analysis')
+    })
+    
+  } catch (error) {
+    console.error('Mock image analysis failed:', error)
+  }
+}
+
+// Mock image analysis response generator
+function getMockImageAnalysisResponse(imageElement) {
+  const src = imageElement.src || ''
+  const alt = imageElement.alt || ''
+  
+  // Simple logic to determine response type
+  if (src.includes('chart') || alt.includes('chart')) {
+    return {
+      labels: [
+        { name: "Chart", confidence: 98.7 },
+        { name: "Graph", confidence: 94.3 },
+        { name: "Text", confidence: 89.1 },
+        { name: "Statistics", confidence: 82.6 }
+      ],
+      ocrText: "Unemployment rate drops to 3.2% in Q4 2024",
+      textClassification: "statement",
+      credibility: {
+        level: "high",
+        rationale: "Statistical claim with specific data points. Unemployment statistics are typically verifiable through official sources."
+      }
+    }
+  }
+  
+  if (src.includes('opinion') || alt.includes('opinion')) {
+    return {
+      labels: [
+        { name: "Person", confidence: 91.8 },
+        { name: "Text", confidence: 88.4 },
+        { name: "Quote", confidence: 76.2 }
+      ],
+      ocrText: "I believe this policy will transform our economy for the better",
+      textClassification: "opinion",
+      credibility: {
+        level: "low",
+        rationale: "Personal opinion statement using subjective language like 'I believe' and 'for the better'."
+      }
+    }
+  }
+  
+  if (src.includes('landscape') || alt.includes('nature')) {
+    return {
+      labels: [
+        { name: "Landscape", confidence: 94.5 },
+        { name: "Mountain", confidence: 89.7 },
+        { name: "Sky", confidence: 92.3 },
+        { name: "Nature", confidence: 87.1 }
+      ],
+      ocrText: "",
+      textClassification: null,
+      credibility: null
+    }
+  }
+  
+  // Default news image response
+  return {
+    labels: [
+      { name: "Person", confidence: 95.2 },
+      { name: "Suit", confidence: 87.4 },
+      { name: "Microphone", confidence: 92.1 },
+      { name: "Press Conference", confidence: 78.9 },
+      { name: "Building", confidence: 65.3 }
+    ],
+    ocrText: "Breaking: Mayor announces new infrastructure plan worth $2.5 billion",
+    textClassification: "statement",
+    credibility: {
+      level: "medium",
+      rationale: "Statement contains specific financial figures but lacks verifiable sources in the image context."
+    }
+  }
+}
