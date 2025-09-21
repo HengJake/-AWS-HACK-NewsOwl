@@ -354,15 +354,15 @@ class FactCheckCompanion {
             timestamp: Date.now()
           })
           console.log("Side panel opened for fact-checking")
+          
+          // Call AWS API for analysis
+          await this.analyzeText(text)
         } catch (error) {
           console.error("Error opening side panel:", error)
         }
       } else {
         console.log("Extension context invalidated - please refresh the page")
       }
-
-      // Transform the choice card into an analysis card
-      // await this.transformToAnalysisCard(text)
     } else {
       // User said no - just fade away
       this.hideFactCheckCard()
@@ -370,7 +370,7 @@ class FactCheckCompanion {
   }
 
 
-  async analyzeText(text, card) {
+  async analyzeText(text, card = null) {
     console.log('Starting API call for text:', text.substring(0, 50) + '...')
     try {
       const response = await fetch('https://majb2cj4m6.execute-api.ap-southeast-1.amazonaws.com/check', {
@@ -395,10 +395,14 @@ class FactCheckCompanion {
         })
       }
 
-      this.updateCardWithAnalysis(card, analysis)
+      if (card) {
+        this.updateCardWithAnalysis(card, analysis)
+      }
     } catch (error) {
       console.error('API Error:', error)
-      this.showErrorInCard(card)
+      if (card) {
+        this.showErrorInCard(card)
+      }
     }
   }
 

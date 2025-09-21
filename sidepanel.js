@@ -125,8 +125,6 @@ function updateWithAnalysis(analysis) {
 function updateWithImageAnalysis(analysis) {
   console.log('Updating sidepanel with image analysis:', analysis)
 
-  return
-
   const root = document.getElementById("sp-root")
   const imageStatus = document.getElementById("image-status")
 
@@ -260,8 +258,6 @@ function handleImageAnalysisError(error) {
 // Update sources section
 function updateSources(sources) {
   console.log('Updating sources:', sources)
-
-  return
   // Target the sources section within ready-content specifically
   const sourcesSection = document.querySelector(".ready-content #sp-sources")
   if (!sourcesSection) {
